@@ -9,7 +9,11 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "supabase": "supabase"
+    "supabase": "supabase",
+    "db:push": "supabase db push",
+    "db:diff": "supabase db diff --schema public",
+    "db:seed": "supabase db seed",
+    "gen:types": "supabase gen types typescript --project-id tkpnrutloxtgabvnjsib > types/supabase.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

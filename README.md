@@ -22,7 +22,14 @@ Open [http://localhost:3000](http://localhost:3000).
 ```bash
 pnpm supabase login
 pnpm supabase link --project-ref tkpnrutloxtgabvnjsib
+pnpm db:push                 # apply migrations to the linked project
+pnpm gen:types               # refresh types/supabase.ts (needs login / access token)
 ```
+
+**Remote seed (dev DB only):** set `SUPABASE_DB_URL` to the direct Postgres URI, then  
+`pnpm db:seed -- --db-url "$SUPABASE_DB_URL"`.
+
+`pnpm db:diff` compares schema via a local shadow DB and needs Docker running.
 
 ## Scripts
 
