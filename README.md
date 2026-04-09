@@ -16,6 +16,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — directory layout and conventions  
 - [USER_STORIES.md](./USER_STORIES.md) — MVP user stories and acceptance criteria  
+- [docs/SCREENS.md](./docs/SCREENS.md) — screen inventory and layout notes  
 
 ## Supabase
 
