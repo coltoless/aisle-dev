@@ -1,6 +1,6 @@
 # USER_STORIES.md — Aisle Wedding Planning Platform
 
-User stories and acceptance criteria for all MVP features.  
+User stories and acceptance criteria for all MVP features.
 Format: **Given** [context] / **When** [action] / **Then** [outcome]
 
 ---
@@ -16,7 +16,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** my planning data is saved and private.
 
 **Acceptance Criteria:**
-
 - Given I am on `/signup`, when I enter a valid email and password (8+ chars) and submit, then my account is created and I am redirected to `/onboarding/step-1`.
 - Given I submit with an email already in use, then I see an inline error: "An account with this email already exists. Log in instead?"
 - Given I submit with a password under 8 characters, then I see an inline validation error before submission.
@@ -32,7 +31,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** I can access my wedding planning data.
 
 **Acceptance Criteria:**
-
 - Given I am on `/login`, when I enter correct credentials, then I am redirected to `/dashboard`.
 - Given I enter incorrect credentials, then I see: "Email or password is incorrect." — never specify which is wrong.
 - Given I click "Forgot password?", then I am prompted for my email and receive a reset link within 2 minutes.
@@ -47,7 +45,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** I can get started without creating a new password.
 
 **Acceptance Criteria:**
-
 - Given I click "Continue with Google," then I am redirected to Google's OAuth flow.
 - Given I complete OAuth as a new user, then my account is created and I land on `/onboarding/step-1`.
 - Given I complete OAuth as an existing user, then I land on `/dashboard`.
@@ -66,7 +63,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** I get a personalized planning checklist and budget right away.
 
 **Acceptance Criteria:**
-
 - Given I am on Step 1, when I enter both partner names and click Continue, then I advance to Step 2.
 - Given I leave either name field blank, then I cannot proceed — an inline error appears on the empty field.
 - Given I am on Step 2, when I complete all required fields (location, guest count, budget, at least 1 style), then I can advance to Step 3.
@@ -89,7 +85,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** I feel immediately understood and know what to tackle first.
 
 **Acceptance Criteria:**
-
 - Given Step 4 loads, then an AI-generated message appears within 5 seconds (skeleton loader shown during generation).
 - Given the AI message loads, then it references: partner names, wedding location or date (if provided), and at least one actionable observation (e.g., timing risk, top priority to tackle first).
 - Given the AI message fails to load, then a fallback message is shown: "Welcome! Your checklist and budget are ready. I'm here whenever you have questions."
@@ -107,7 +102,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** I know exactly where I stand and what needs attention.
 
 **Acceptance Criteria:**
-
 - Given I navigate to `/dashboard`, then I see: partner names, days until wedding, checklist completion count + progress bar, budget summary (total / committed / remaining), and upcoming tasks (next 3–5 due).
 - Given my wedding date is not yet set, then the countdown shows "Date TBD" instead of a number.
 - Given I have overdue tasks, then they are visually distinct (amber, warning icon) in the upcoming tasks list.
@@ -127,7 +121,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** I don't have to research venues from scratch.
 
 **Acceptance Criteria:**
-
 - Given I navigate to `/venues`, then venue recommendations are automatically generated based on my profile within 10 seconds (loading skeletons shown during generation).
 - Given recommendations load, then I see 4–6 venue cards, each displaying: name, location, venue type, estimated price range, style tags, and a 2–3 sentence description.
 - Given my venue budget is $X, then no recommended venue has an `estimated_price_high` greater than 1.2× $X without being clearly marked as "Stretch."
@@ -146,7 +139,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** my dashboard reflects that this critical task is done.
 
 **Acceptance Criteria:**
-
 - Given I have a saved venue, when I change its status to "Booked," then:
   - The venue is marked as booked in my saved list
   - The venue name appears on my dashboard under confirmed details
@@ -166,7 +158,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** I know what to do and when.
 
 **Acceptance Criteria:**
-
 - Given I navigate to `/checklist`, then tasks are organized into accordion sections by phase.
 - Given my current planning phase (based on wedding date), then that phase's section is expanded by default; all others are collapsed.
 - Given a phase section is fully complete, then it shows a completion badge and can be toggled closed.
@@ -183,7 +174,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** I can track my progress accurately.
 
 **Acceptance Criteria:**
-
 - Given I click the checkbox on a task, then the task is immediately marked complete with an animated strikethrough (optimistic update).
 - Given the optimistic update fails to save, then the checkbox is reverted and a toast error is shown.
 - Given I mark a task complete, then the phase progress bar and overall progress bar update immediately.
@@ -198,7 +188,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** my checklist reflects our actual wedding.
 
 **Acceptance Criteria:**
-
 - Given I click "+ Add custom task," then a dialog opens with: title (required), category (required), phase (required), due date (optional), notes (optional).
 - Given I submit a custom task, then it appears in the correct phase section with a subtle visual indicator that it's custom.
 - Given I leave the title field blank and submit, then an inline error appears and the form does not submit.
@@ -212,7 +201,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** they don't clutter my current view.
 
 **Acceptance Criteria:**
-
 - Given I open the options menu on a task and select "Snooze," then I see options: 1 week, 2 weeks, 1 month, or custom date.
 - Given I select a snooze duration, then the task disappears from the current view and is labeled with a snooze date.
 - Given a snoozed task's snooze date passes, then it reappears in the task list on next load.
@@ -230,7 +218,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** I understand where our money is going.
 
 **Acceptance Criteria:**
-
 - Given I navigate to `/budget`, then I see: total budget, total committed, total remaining — in large, clear type at the top.
 - Given budget items load, then I see a donut chart with each category represented by a distinct color with a legend.
 - Given budget items load, then I see a table with columns: Category, Estimated Cost, Actual Quote, Deposit Paid, Balance Due, Due Date.
@@ -246,7 +233,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** my budget reflects reality, not estimates.
 
 **Acceptance Criteria:**
-
 - Given I click on a budget row, then it expands to an inline editable form with all fields.
 - Given I update a field and click Save (or press Enter), then the value is saved and the row collapses.
 - Given I update a value, then the summary totals (total committed, remaining) update immediately.
@@ -262,7 +248,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** I can open it in Excel or Google Sheets.
 
 **Acceptance Criteria:**
-
 - Given I click "Export CSV," then a `.csv` file downloads immediately (client-side generation, no server call needed).
 - Given the CSV downloads, then it includes all budget categories with: category name, estimated cost, actual quote, deposit paid, balance due, and due date.
 - Given any cost values are null, then the CSV cell is empty (not "0" or "null").
@@ -276,11 +261,10 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 ### US-701 — Add a Vendor
 
 **As a** couple tracking our vendors,  
-**I want to** add vendors to my tracker,  
+**I want to** add vendors to our tracker,  
 **So that** all contact info and status is in one place.
 
 **Acceptance Criteria:**
-
 - Given I click "+ Add Vendor," then a modal opens with fields: Category (required), Company Name, Contact Name, Email, Phone, Website, Status (defaults to "Researching"), Notes.
 - Given I submit a vendor with only Category filled in, then the vendor is created successfully (other fields are optional).
 - Given the vendor is created, then it appears in the correct Kanban column based on its status.
@@ -294,7 +278,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** I can see at a glance what's booked vs. still in progress.
 
 **Acceptance Criteria:**
-
 - Given I drag a vendor card to a different Kanban column, then its status updates optimistically and is saved to the database.
 - Given I click on a vendor card and change its status via dropdown, then the card moves to the correct column.
 - Given a vendor reaches "Booked" status, then if there is a corresponding checklist task (e.g., "Book photographer"), it is automatically marked complete.
@@ -313,7 +296,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** everything is in one place and I can track payment dates.
 
 **Acceptance Criteria:**
-
 - Given I click "+ Upload," then a modal appears with: PDF upload dropzone, vendor name (required), contract value, deposit amount, deposit due date, balance due date, signed (Y/N toggle).
 - Given I drag a PDF onto the dropzone, then it is accepted and the filename is shown.
 - Given I upload a non-PDF file, then an error appears: "Only PDF files are supported."
@@ -330,7 +312,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** I don't miss important terms before signing.
 
 **Acceptance Criteria:**
-
 - Given I click "AI Review" on a contract, then a loading state is shown while the review runs (typically 10–20 seconds).
 - Given the review completes, then a panel opens with clearly labeled sections: Summary, Key Dates & Payments, Cancellation Policy, Flags, Questions to Ask.
 - Given the review finds flagged items, then they are visually distinct (amber/warning styling) and specific (not vague).
@@ -351,7 +332,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** I get expert, personalized advice without hiring a planner.
 
 **Acceptance Criteria:**
-
 - Given I click the AI buddy FAB, then the chat drawer opens from the right side within 200ms.
 - Given I type a message and press Enter or click Send, then my message appears immediately and a loading indicator shows while the AI responds.
 - Given the AI responds, then text streams in progressively (not all at once) so I see the response being written.
@@ -368,7 +348,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** I don't have to manually add things we discuss.
 
 **Acceptance Criteria:**
-
 - Given the AI references a task I should do (e.g., "you should research photo booths"), then a task is added to my checklist automatically.
 - Given a task is added, then an action pill appears below the AI message: "✓ Added to checklist: [task title]"
 - Given I don't want the task, then I can click the action pill to undo the addition.
@@ -383,7 +362,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** I can make adjustments before it's too late.
 
 **Acceptance Criteria:**
-
 - Given I mention a vendor quote in chat that exceeds my category allocation, then the AI acknowledges the overrun and suggests alternatives.
 - Given the AI flags a budget issue, then it uses the flag_budget_item tool and an action pill confirms: "⚠ Flagged: [Category] is over budget."
 - Given a budget flag is raised, then the corresponding budget row is highlighted on the `/budget` page.
@@ -397,7 +375,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** I'm reminded of time-sensitive tasks I might be overlooking.
 
 **Acceptance Criteria:**
-
 - Given I am 9–12 months from my wedding and have not booked a photographer, then the dashboard AI highlight card shows a nudge about photographer booking timing.
 - Given I am less than 6 months out and have no venue booked, then the nudge is urgent and specific.
 - Given there are no urgent nudges for my situation, then the AI highlight card shows a general encouragement or next suggested task.
@@ -416,7 +393,6 @@ Format: **Given** [context] / **When** [action] / **Then** [outcome]
 **So that** Aisle's recommendations stay accurate.
 
 **Acceptance Criteria:**
-
 - Given I navigate to `/settings`, then I see my current wedding profile details in editable form.
 - Given I update my wedding date and save, then the checklist phase assignments are recalculated and due dates are updated.
 - Given I update my budget range, then the budget category allocations are recalculated (with a confirmation prompt before overwriting manual edits).

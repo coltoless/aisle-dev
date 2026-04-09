@@ -15,8 +15,9 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Docs in repo
 
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — directory layout and conventions  
-- [USER_STORIES.md](./USER_STORIES.md) — MVP user stories and acceptance criteria  
+- [docs/USER_STORIES.md](./docs/USER_STORIES.md) — MVP user stories and acceptance criteria  
 - [docs/SCREENS.md](./docs/SCREENS.md) — screen inventory and layout notes  
+- [docs/SETUP.md](./docs/SETUP.md) — local dev environment setup (Supabase, env, tooling)  
 
 ## Supabase
 

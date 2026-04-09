@@ -14,8 +14,8 @@ This document defines the **directory layout** and layering conventions for the 
 ├── types/                  # Shared TypeScript types (domain + API)
 ├── public/                 # Static assets
 ├── supabase/               # Local Supabase config & SQL migrations
+├── docs/                   # Product & setup docs (SCREENS, USER_STORIES, SETUP)
 ├── ARCHITECTURE.md
-├── USER_STORIES.md
 ├── components.json         # shadcn/ui CLI config
 └── package.json
 ```
@@ -29,7 +29,7 @@ This document defines the **directory layout** and layering conventions for the 
 | `app/globals.css` | Tailwind + CSS variables (shadcn theme) |
 | `app/(auth)/` | Login, signup, password reset |
 | `app/(dashboard)/` | Authenticated shell: dashboard, checklist, budget, venues, vendors, contracts, settings |
-| `app/onboarding/` | Multi-step onboarding flow |
+| `app/(auth)/onboarding/` | Multi-step onboarding flow (`/onboarding/1`–`4`) |
 | `app/api/**/route.ts` | Route handlers (AI, webhooks, uploads) |
 | `auth/callback/route.ts` | Supabase OAuth callback (when added) |
 
