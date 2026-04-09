@@ -9,6 +9,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['"DM Sans"', "system-ui", "sans-serif"],
+        display: ['"Cormorant Garamond"', "Georgia", "serif"],
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -33,8 +37,10 @@ const config: Config = {
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "var(--color-accent)",
+          foreground: "var(--color-accent-foreground)",
+          muted: "var(--color-accent-muted)",
+          hover: "var(--color-accent-hover)",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -50,6 +56,34 @@ const config: Config = {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+        /* Style-guide tokens → utilities: bg-canvas, text-ink, border-line, bg-brand, text-status-error, etc. */
+        canvas: {
+          DEFAULT: "var(--color-bg-primary)",
+          card: "var(--color-bg-card)",
+          subtle: "var(--color-bg-subtle)",
+          elevated: "var(--color-bg-elevated)",
+        },
+        ink: {
+          DEFAULT: "var(--color-text-primary)",
+          secondary: "var(--color-text-secondary)",
+          muted: "var(--color-text-muted)",
+          inverse: "var(--color-text-inverse)",
+        },
+        line: {
+          DEFAULT: "var(--color-border)",
+          strong: "var(--color-border-strong)",
+        },
+        status: {
+          success: "var(--color-status-success)",
+          warning: "var(--color-status-warning)",
+          error: "var(--color-status-error)",
+          info: "var(--color-status-info)",
+        },
+      },
+      boxShadow: {
+        card: "var(--shadow-card)",
+        elevated: "var(--shadow-elevated)",
+        focus: "var(--shadow-focus)",
       },
       borderRadius: {
         lg: "var(--radius)",

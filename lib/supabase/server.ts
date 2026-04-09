@@ -1,6 +1,6 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import type { Database } from "@/types/supabase";
+import type { AppDatabase } from "@/types/database-app";
 
 /**
  * Server-side Supabase client. Next.js 14: `cookies()` is synchronous.
@@ -9,7 +9,7 @@ import type { Database } from "@/types/supabase";
 export async function createClient() {
   const cookieStore = cookies();
 
-  return createServerClient<Database>(
+  return createServerClient<AppDatabase>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
