@@ -45,7 +45,7 @@ export async function signUp(formData: FormData): Promise<{ error: string } | vo
   }
 
   revalidatePath("/", "layout");
-  redirect("/onboarding");
+  redirect("/onboarding/1");
 }
 
 export async function signIn(formData: FormData): Promise<{ error: string } | void> {

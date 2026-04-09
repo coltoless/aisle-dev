@@ -1,4 +1,5 @@
 import type { Tool } from "@anthropic-ai/sdk/resources/messages";
+import { BUDGET_RANGES, GUEST_COUNT_RANGES, PRIORITY_CATEGORIES } from "@/lib/constants";
 import type { WeddingProfile } from "@/types";
 
 export interface WeddingContext {
@@ -114,4 +115,38 @@ export function buildOnboardingIntroPrompt(params: {
   topPriorityLabel: string;
 }): string {
   return `Write a 2–3 sentence welcome for ${params.partner1Name} and ${params.partner2Name}. Mention ${params.locationLabel} and ${params.weddingDateLabel}. Close with one concrete next step tied to their top priority: ${params.topPriorityLabel}. Tone: warm, confident, not cheesy.`;
+}
+
+/** User message content for Claude onboarding intro (short, warm paragraph). */
+export function buildOnboardingIntroMessage(input: {
+  partner1Name: string;
+  partner2Name: string;
+  weddingDate: string | null;
+  location: string;
+  guestCountRange: string;
+  budgetRange: string;
+  styleTags: string[];
+  topPriorities: string[];
+}): string {
+  const guestLabel =
+    GUEST_COUNT_RANGES.find((g) => g.id === input.guestCountRange)?.label ?? input.guestCountRange;
+  const budgetLabel =
+    BUDGET_RANGES.find((b) => b.id === input.budgetRange)?.label ?? input.budgetRange;
+  const dateLabel = input.weddingDate
+    ? `Wedding date: ${input.weddingDate}.`
+    : "They have not set a firm date yet.";
+  const styles = input.styleTags.length ? input.styleTags.join(", ") : "still taking shape";
+  const topLabels = input.topPriorities.map(
+    (id) => PRIORITY_CATEGORIES.find((p) => p.id === id)?.label ?? id,
+  );
+  const tops = topLabels.length ? topLabels.join(", ") : "venue and planning basics";
+
+  return [
+    `Write exactly one short paragraph (2–4 sentences) as Aisle, welcoming ${input.partner1Name} and ${input.partner2Name}.`,
+    `${dateLabel} Location focus: ${input.location}.`,
+    `Guest count band: ${guestLabel}. Budget band: ${budgetLabel}. Wedding vibe tags: ${styles}.`,
+    `Their top priorities in order: ${tops}.`,
+    `End with one specific, practical next step. Warm, calm, confident — no exclamation spam, no clichés about fairy tales.`,
+    `Output plain text only, no title or bullet points.`,
+  ].join(" ");
 }

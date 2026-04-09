@@ -28,7 +28,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const couple = coupleRes.data as CoupleSidebar | null;
 
   if (!couple) {
-    redirect("/onboarding");
+    redirect("/onboarding/1");
   }
 
   const profileRes = await supabase

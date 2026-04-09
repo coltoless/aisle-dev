@@ -13,3 +13,7 @@ export function jsonError(
   };
   return NextResponse.json(body, { status });
 }
+
+export function jsonOk<T>(data: T, init?: { status?: number }): NextResponse<T> {
+  return NextResponse.json(data, { status: init?.status ?? 200 });
+}

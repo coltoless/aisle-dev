@@ -11,13 +11,14 @@ export const GUEST_COUNT_RANGES = [
   { id: "200_plus", label: "200+" },
 ] as const;
 
+/** IDs must match `wedding_profiles.budget_range` CHECK in Supabase migrations. */
 export const BUDGET_RANGES = [
   { id: "under_15k", label: "Under $15k", midpointCents: 750_000 },
-  { id: "15k_25k", label: "$15k – $25k", midpointCents: 2_000_000 },
-  { id: "25k_40k", label: "$25k – $40k", midpointCents: 3_250_000 },
-  { id: "40k_60k", label: "$40k – $60k", midpointCents: 5_000_000 },
-  { id: "60k_80k", label: "$60k – $80k", midpointCents: 7_000_000 },
-  { id: "80k_plus", label: "$80k+", midpointCents: 10_000_000 },
+  { id: "15k_30k", label: "$15k – $30k", midpointCents: 2_250_000 },
+  { id: "30k_50k", label: "$30k – $50k", midpointCents: 4_000_000 },
+  { id: "50k_75k", label: "$50k – $75k", midpointCents: 6_250_000 },
+  { id: "75k_100k", label: "$75k – $100k", midpointCents: 8_750_000 },
+  { id: "100k_plus", label: "$100k+", midpointCents: 12_000_000 },
 ] as const;
 
 export const WEDDING_STYLES = [
@@ -95,3 +96,10 @@ export type ChecklistCategory = (typeof CHECKLIST_CATEGORIES)[number]["id"];
 export type TaskEffort = (typeof TASK_EFFORT_LEVELS)[number]["id"];
 export type BudgetCategory = (typeof BUDGET_CATEGORIES)[number]["id"];
 export type VendorStatus = (typeof VENDOR_STATUSES)[number]["id"];
+
+export {
+  DEFAULT_BUDGET_CATEGORIES,
+  DEFAULT_CHECKLIST_ITEMS,
+  getSuggestedDueDate,
+} from "./onboarding-default-data";
+export type { DefaultChecklistTemplate } from "./onboarding-default-data";

@@ -22,7 +22,7 @@ export async function GET(request: Request) {
           .eq("user_id", user.id)
           .maybeSingle();
 
-        const destination = next ?? (couple ? "/dashboard" : "/onboarding");
+        const destination = next ?? (couple ? "/dashboard" : "/onboarding/1");
         return NextResponse.redirect(`${origin}${destination}`);
       }
     }
