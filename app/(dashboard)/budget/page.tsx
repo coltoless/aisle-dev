@@ -1,8 +1,13 @@
+import { DashboardPageHeader } from "@/components/dashboard/dashboard-page-header";
+
 export default function BudgetPage() {
   return (
     <div>
-      <h1 className="font-display text-3xl font-semibold text-[var(--color-text-primary)]">Budget</h1>
-      <p className="mt-2 text-[var(--color-text-secondary)]">Budget tracking will live here.</p>
+      <DashboardPageHeader
+        title="Budget"
+        description="Track estimates, quotes, and what’s left across every category."
+      />
+      <p className="text-sm text-[var(--color-text-muted)]">Charts and category detail will appear here.</p>
     </div>
   );
 }

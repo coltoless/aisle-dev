@@ -1,8 +1,13 @@
+import { DashboardPageHeader } from "@/components/dashboard/dashboard-page-header";
+
 export default function ChecklistPage() {
   return (
     <div>
-      <h1 className="font-display text-3xl font-semibold text-[var(--color-text-primary)]">Checklist</h1>
-      <p className="mt-2 text-[var(--color-text-secondary)]">Your timeline tasks will live here.</p>
+      <DashboardPageHeader
+        title="Planning checklist"
+        description="Work through phases from a year out to the week of your wedding."
+      />
+      <p className="text-sm text-[var(--color-text-muted)]">Interactive checklist by phase will appear here.</p>
     </div>
   );
 }

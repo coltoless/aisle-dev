@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 type BuddyDrawerProps = {
@@ -44,9 +43,4 @@ export function BuddyDrawer({ open, onOpenChange }: BuddyDrawerProps) {
       </aside>
     </>
   );
-}
-
-export function useBuddyDrawer() {
-  const [open, setOpen] = useState(false);
-  return { open, setOpen };
 }

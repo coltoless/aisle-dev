@@ -179,11 +179,29 @@ export function OnboardingStep4() {
           </ul>
         </div>
 
+        {!completeOk && !completeError ? (
+          <div
+            data-testid="onboarding-save-skeleton"
+            className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-6 shadow-sm"
+            aria-busy="true"
+            aria-label="Saving your wedding plan"
+          >
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-text-muted)]">
+              Saving checklist & budget
+            </p>
+            <div className="mt-4 space-y-2">
+              <div className="h-2.5 w-full animate-pulse rounded-md bg-[var(--color-bg-subtle)]" />
+              <div className="h-2.5 w-[88%] animate-pulse rounded-md bg-[var(--color-bg-subtle)]" />
+              <div className="h-2.5 w-[72%] animate-pulse rounded-md bg-[var(--color-bg-subtle)]" />
+            </div>
+          </div>
+        ) : null}
+
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-6 shadow-sm">
           <h2 className="font-display text-xl font-semibold text-[var(--color-text-primary)]">A note from Aisle</h2>
           <div className="mt-4 min-h-[4.5rem]">
             {introLoading ? (
-              <div className="space-y-2" aria-busy="true">
+              <div className="space-y-2" data-testid="onboarding-ai-skeleton" aria-busy="true" aria-label="Loading AI message">
                 <div className="h-3 w-full animate-pulse rounded bg-[var(--color-bg-subtle)]" />
                 <div className="h-3 w-[92%] animate-pulse rounded bg-[var(--color-bg-subtle)]" />
                 <div className="h-3 w-4/5 animate-pulse rounded bg-[var(--color-bg-subtle)]" />

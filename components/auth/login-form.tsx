@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { signIn, signInWithGoogle } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
@@ -9,10 +8,13 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function LoginForm() {
-  const searchParams = useSearchParams();
-  const urlError = searchParams.get("error");
-  const [error, setError] = useState<string | null>(urlError ? decodeParam(urlError) : null);
+type LoginFormProps = {
+  /** OAuth / middleware errors passed from the server page via `?error=` */
+  initialError?: string | null;
+};
+
+export function LoginForm({ initialError = null }: LoginFormProps) {
+  const [error, setError] = useState<string | null>(initialError);
 
   return (
     <Card className="w-full max-w-[440px] border-[var(--color-border)] bg-[var(--color-bg-card)] shadow-[var(--shadow-card)]">
@@ -102,12 +104,4 @@ export function LoginForm() {
       </CardFooter>
     </Card>
   );
-}
-
-function decodeParam(value: string) {
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return value;
-  }
 }

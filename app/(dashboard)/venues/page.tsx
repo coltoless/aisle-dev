@@ -1,8 +1,13 @@
+import { DashboardPageHeader } from "@/components/dashboard/dashboard-page-header";
+
 export default function VenuesPage() {
   return (
     <div>
-      <h1 className="font-display text-3xl font-semibold text-[var(--color-text-primary)]">Venues</h1>
-      <p className="mt-2 text-[var(--color-text-secondary)]">Venue shortlist and comparisons will live here.</p>
+      <DashboardPageHeader
+        title="Venues"
+        description="Shortlist venues, compare options, and keep notes in one place."
+      />
+      <p className="text-sm text-[var(--color-text-muted)]">Discovery and comparison tools will appear here.</p>
     </div>
   );
 }

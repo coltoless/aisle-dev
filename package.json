@@ -13,7 +13,9 @@
     "db:push": "supabase db push",
     "db:diff": "supabase db diff --schema public",
     "db:seed": "supabase db seed",
-    "gen:types": "supabase gen types typescript --project-id tkpnrutloxtgabvnjsib > types/supabase.ts"
+    "gen:types": "supabase gen types typescript --project-id tkpnrutloxtgabvnjsib > types/supabase.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
@@ -50,6 +52,7 @@
     "@types/react": "^18.3.14",
     "@types/react-dom": "^18.3.5",
     "eslint": "^8.57.1",
+    "@playwright/test": "^1.49.1",
     "eslint-config-next": "14.2.35",
     "postcss": "^8.4.49",
     "supabase": "^2.84.10",

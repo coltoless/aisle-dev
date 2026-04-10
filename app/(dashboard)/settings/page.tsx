@@ -1,8 +1,13 @@
+import { DashboardPageHeader } from "@/components/dashboard/dashboard-page-header";
+
 export default function SettingsPage() {
   return (
     <div>
-      <h1 className="font-display text-3xl font-semibold text-[var(--color-text-primary)]">Settings</h1>
-      <p className="mt-2 text-[var(--color-text-secondary)]">Account and wedding settings will live here.</p>
+      <DashboardPageHeader
+        title="Settings"
+        description="Account details and wedding profile preferences."
+      />
+      <p className="text-sm text-[var(--color-text-muted)]">Editable profile and preferences will appear here.</p>
     </div>
   );
 }

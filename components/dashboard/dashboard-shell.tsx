@@ -8,11 +8,13 @@ import {
   DollarSign,
   FileText,
   LayoutDashboard,
+  Send,
   Settings,
   Users,
 } from "lucide-react";
-import { BuddyDrawer, useBuddyDrawer } from "@/components/buddy/BuddyDrawer";
+import { BuddyDrawer } from "@/components/buddy/BuddyDrawer";
 import { cn } from "@/lib/utils";
+import { useBuddyStore } from "@/store/buddyStore";
 
 const nav = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -39,17 +41,24 @@ export function DashboardShell({
   children,
 }: DashboardShellProps) {
   const pathname = usePathname();
-  const buddy = useBuddyDrawer();
+  const buddyOpen = useBuddyStore((s) => s.buddyOpen);
+  const setBuddyOpen = useBuddyStore((s) => s.setBuddyOpen);
 
   return (
     <div className="flex min-h-screen bg-[var(--color-bg-primary)]">
-      <aside className="fixed left-0 top-0 z-30 flex h-screen w-[240px] flex-col border-r border-[var(--color-border)] bg-[var(--color-bg-card)]">
+      <aside className="fixed left-0 top-0 z-30 flex h-screen w-[240px] flex-col border-r border-[var(--color-border)] bg-[var(--color-bg-secondary)] shadow-[0_1px_0_rgba(28,25,23,0.04)]">
         <div className="px-5 pt-8">
-          <Link href="/dashboard" className="font-display text-2xl font-semibold text-[var(--color-text-primary)]">
+          <Link
+            href="/dashboard"
+            className="font-display text-2xl font-semibold tracking-tight text-[var(--color-text-primary)]"
+          >
             Aisle
           </Link>
+          <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+            Wedding planner
+          </p>
         </div>
-        <nav className="mt-8 flex flex-1 flex-col gap-0.5 px-3">
+        <nav className="mt-6 flex flex-1 flex-col gap-0.5 px-3">
           {nav.map(({ href, label, icon: Icon }) => {
             const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
             return (
@@ -97,19 +106,19 @@ export function DashboardShell({
       </aside>
 
       <div className="flex min-h-screen flex-1 pl-[240px]">
-        <main className="mx-auto w-full max-w-[1100px] flex-1 p-5 md:p-10">{children}</main>
+        <main className="mx-auto w-full max-w-[1100px] flex-1 px-5 py-8 md:px-10 md:py-10">{children}</main>
       </div>
 
       <button
         type="button"
         aria-label="Open AI Buddy"
-        onClick={() => buddy.setOpen(true)}
-        className="fixed bottom-6 right-6 z-40 flex size-12 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-card transition-transform hover:scale-105 hover:bg-accent-hover"
+        onClick={() => setBuddyOpen(true)}
+        className="fixed bottom-6 right-6 z-40 flex size-12 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-elevated transition-transform hover:scale-105 hover:bg-accent-hover"
       >
-        <span className="text-lg font-semibold">✦</span>
+        <Send className="size-5" strokeWidth={2} aria-hidden />
       </button>
 
-      <BuddyDrawer open={buddy.open} onOpenChange={buddy.setOpen} />
+      <BuddyDrawer open={buddyOpen} onOpenChange={setBuddyOpen} />
     </div>
   );
 }

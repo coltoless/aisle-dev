@@ -52,25 +52,28 @@ function SortablePriorityRow({
   };
 
   return (
-    <div ref={setNodeRef} style={style}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      data-testid={`onboarding-priority-${id}`}
+      {...attributes}
+      {...listeners}
+    >
       <div
         className={cn(
-          "mb-2 flex items-center gap-3 rounded-lg border px-3 py-3",
+          "mb-2 flex cursor-grab items-center gap-3 rounded-lg border px-3 py-3 active:cursor-grabbing",
           isTop3
             ? "border-l-[3px] border-l-accent bg-[var(--color-bg-card)] shadow-sm"
             : "border-[var(--color-border)] bg-[var(--color-bg-subtle)]/60",
           isDragging && "opacity-70",
         )}
       >
-        <button
-          type="button"
-          className="touch-none text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
-          aria-label="Drag to reorder"
-          {...attributes}
-          {...listeners}
+        <span
+          className="touch-none text-[var(--color-text-muted)]"
+          aria-hidden
         >
           <GripVertical className="size-5" />
-        </button>
+        </span>
         <span
           className={cn(
             "flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold",

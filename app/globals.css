@@ -8,6 +8,7 @@
   :root {
     /* ─── Aisle UI tokens ─── */
     --color-bg-primary: #f7f4ef;
+    --color-bg-secondary: #f2efe8;
     --color-bg-card: #ffffff;
     --color-bg-subtle: #efede6;
     --color-bg-elevated: #ffffff;
@@ -29,6 +30,10 @@
     --color-status-warning: #b45309;
     --color-status-error: #b91c1c;
     --color-status-info: #1d4ed8;
+
+    --color-warning: var(--color-status-warning);
+    --color-danger: var(--color-status-error);
+    --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.05);
 
     --shadow-card: 0 1px 3px rgba(28, 25, 23, 0.06), 0 1px 2px rgba(28, 25, 23, 0.04);
     --shadow-elevated: 0 10px 40px rgba(28, 25, 23, 0.08), 0 4px 12px rgba(28, 25, 23, 0.06);
@@ -64,6 +69,7 @@
 
   .dark {
     --color-bg-primary: #1c1917;
+    --color-bg-secondary: #25211f;
     --color-bg-card: #292524;
     --color-bg-subtle: #44403c;
     --color-bg-elevated: #292524;
@@ -85,6 +91,10 @@
     --color-status-warning: #fbbf24;
     --color-status-error: #f87171;
     --color-status-info: #60a5fa;
+
+    --color-warning: var(--color-status-warning);
+    --color-danger: var(--color-status-error);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
 
     --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.2);
     --shadow-elevated: 0 12px 48px rgba(0, 0, 0, 0.35);

@@ -1,8 +1,13 @@
+import { DashboardPageHeader } from "@/components/dashboard/dashboard-page-header";
+
 export default function VendorsPage() {
   return (
     <div>
-      <h1 className="font-display text-3xl font-semibold text-[var(--color-text-primary)]">Vendors</h1>
-      <p className="mt-2 text-[var(--color-text-secondary)]">Vendor pipeline will live here.</p>
+      <DashboardPageHeader
+        title="Vendors"
+        description="See who you’re researching, who’s booked, and what’s still open."
+      />
+      <p className="text-sm text-[var(--color-text-muted)]">Pipeline and kanban views will appear here.</p>
     </div>
   );
 }
