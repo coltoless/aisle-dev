@@ -43,25 +43,34 @@ export const PRIORITY_CATEGORIES = [
   { id: "budget", label: "Budget & contracts" },
 ] as const;
 
-export const CHECKLIST_PHASES = [
+/** Phase ids match `checklist_items.phase` CHECK constraint in Supabase. */
+export const CHECKLIST_PHASE_CONFIG = [
   { id: "12_plus_months", label: "12+ months out", sortOrder: 0 },
-  { id: "9_12_months", label: "9 – 12 months", sortOrder: 1 },
-  { id: "6_9_months", label: "6 – 9 months", sortOrder: 2 },
-  { id: "3_6_months", label: "3 – 6 months", sortOrder: 3 },
-  { id: "1_3_months", label: "1 – 3 months", sortOrder: 4 },
-  { id: "final_weeks", label: "Final weeks", sortOrder: 5 },
-  { id: "day_of", label: "Day-of", sortOrder: 6 },
+  { id: "9_12_months", label: "9 – 12 months out", sortOrder: 1 },
+  { id: "6_9_months", label: "6 – 9 months out", sortOrder: 2 },
+  { id: "3_6_months", label: "3 – 6 months out", sortOrder: 3 },
+  { id: "1_3_months", label: "1 – 3 months out", sortOrder: 4 },
+  { id: "final_month", label: "Final month", sortOrder: 5 },
+  { id: "week_of", label: "Week of", sortOrder: 6 },
+  { id: "day_of", label: "Day-of", sortOrder: 7 },
 ] as const;
 
+/** @deprecated Prefer `CHECKLIST_PHASE_CONFIG`; kept for existing imports. */
+export const CHECKLIST_PHASES = CHECKLIST_PHASE_CONFIG;
+
+/** Category ids match `checklist_items.category` CHECK constraint in Supabase. */
 export const CHECKLIST_CATEGORIES = [
   { id: "venue", label: "Venue" },
   { id: "vendors", label: "Vendors" },
   { id: "attire", label: "Attire" },
+  { id: "legal", label: "Legal" },
+  { id: "logistics", label: "Logistics" },
   { id: "guests", label: "Guests" },
+  { id: "decor", label: "Décor" },
+  { id: "food_beverage", label: "Food & beverage" },
   { id: "ceremony", label: "Ceremony" },
-  { id: "reception", label: "Reception" },
-  { id: "legal", label: "Legal & admin" },
-  { id: "other", label: "Other" },
+  { id: "travel", label: "Travel" },
+  { id: "admin", label: "Admin" },
 ] as const;
 
 export const TASK_EFFORT_LEVELS = [
@@ -91,8 +100,33 @@ export type GuestCountRange = (typeof GUEST_COUNT_RANGES)[number]["id"];
 export type BudgetRange = (typeof BUDGET_RANGES)[number]["id"];
 export type StyleTag = (typeof WEDDING_STYLES)[number]["id"];
 export type PriorityCategory = (typeof PRIORITY_CATEGORIES)[number]["id"];
-export type ChecklistPhase = (typeof CHECKLIST_PHASES)[number]["id"];
+export type ChecklistPhase = (typeof CHECKLIST_PHASE_CONFIG)[number]["id"];
 export type ChecklistCategory = (typeof CHECKLIST_CATEGORIES)[number]["id"];
+
+function daysUntilWeddingForPhase(weddingDate: string | null): number | null {
+  if (!weddingDate) return null;
+  const [y, m, d] = weddingDate.split("-").map(Number);
+  if (!y || !m || !d) return null;
+  const target = new Date(y, m - 1, d);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  target.setHours(0, 0, 0, 0);
+  return Math.round((target.getTime() - today.getTime()) / 86_400_000);
+}
+
+/** Maps wedding date to the checklist phase the couple is in today. */
+export function getCurrentPhase(weddingDate: string | null): ChecklistPhase | null {
+  const days = daysUntilWeddingForPhase(weddingDate);
+  if (days === null) return null;
+  if (days > 365) return "12_plus_months";
+  if (days > 270) return "9_12_months";
+  if (days > 180) return "6_9_months";
+  if (days > 90) return "3_6_months";
+  if (days > 30) return "1_3_months";
+  if (days > 7) return "final_month";
+  if (days > 0) return "week_of";
+  return "day_of";
+}
 export type TaskEffort = (typeof TASK_EFFORT_LEVELS)[number]["id"];
 export type BudgetCategory = (typeof BUDGET_CATEGORIES)[number]["id"];
 export type VendorStatus = (typeof VENDOR_STATUSES)[number]["id"];

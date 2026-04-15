@@ -65,6 +65,7 @@ export interface ChecklistItem {
   notes: string | null;
   effort: TaskEffort | null;
   is_custom: boolean;
+  sort_order: number;
   created_at: string;
 }
 

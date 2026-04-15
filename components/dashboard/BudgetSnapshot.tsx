@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { Cell, Pie, PieChart, Tooltip } from "recharts";
 import { formatUsdAbbreviated, formatUsdFromCents } from "@/lib/dashboard/format-money";
 import type { BudgetItemRow } from "@/lib/dashboard/dashboard-data";
 import { cn } from "@/lib/utils";
@@ -72,35 +72,34 @@ export function BudgetSnapshot({ items }: BudgetSnapshotProps) {
       <h2 className="font-display text-xl font-semibold text-[var(--color-text-primary)]">Budget snapshot</h2>
 
       <div className="mt-6 grid gap-8 lg:grid-cols-2 lg:items-center">
-        <div className="mx-auto h-[220px] w-full max-w-[280px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={slices as { name: string; value: number; color: string }[]}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={90}
-                paddingAngle={2}
-                stroke="none"
-              >
-                {slices.map((entry) => (
-                  <Cell key={entry.name} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip
-                formatter={(value: number) => formatUsdFromCents(value)}
-                labelFormatter={(name) => name}
-                contentStyle={{
-                  borderRadius: 8,
-                  border: "1px solid var(--color-border)",
-                  fontSize: 13,
-                }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
+        <div className="mx-auto flex w-full max-w-[280px] justify-center">
+          <PieChart width={280} height={220}>
+            <Pie
+              data={slices as { name: string; value: number; color: string }[]}
+              dataKey="value"
+              nameKey="name"
+              cx={140}
+              cy={110}
+              innerRadius={60}
+              outerRadius={90}
+              paddingAngle={2}
+              stroke="none"
+              isAnimationActive={false}
+            >
+              {slices.map((entry) => (
+                <Cell key={entry.name} fill={entry.color} />
+              ))}
+            </Pie>
+            <Tooltip
+              formatter={(value: number) => formatUsdFromCents(value)}
+              labelFormatter={(name) => name}
+              contentStyle={{
+                borderRadius: 8,
+                border: "1px solid var(--color-border)",
+                fontSize: 13,
+              }}
+            />
+          </PieChart>
         </div>
 
         <div>

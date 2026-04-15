@@ -113,6 +113,7 @@ export default async function DashboardPage() {
     notes: row.notes,
     effort: null,
     is_custom: row.is_custom,
+    sort_order: row.sort_order,
     created_at: row.created_at,
   }));
 

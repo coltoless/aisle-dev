@@ -1,4 +1,4 @@
-import { BUDGET_RANGES, CHECKLIST_PHASES } from "@/lib/constants";
+import { BUDGET_RANGES, CHECKLIST_PHASES, getCurrentPhase } from "@/lib/constants";
 import type { ChecklistPhase } from "@/lib/constants";
 import type { Database } from "@/types/supabase";
 
@@ -64,15 +64,7 @@ export function buildDashboardSubline(
 }
 
 export function getCurrentChecklistPhase(weddingDate: string | null): ChecklistPhase | null {
-  const days = daysUntilWedding(weddingDate);
-  if (days === null) return null;
-  if (days > 365) return "12_plus_months";
-  if (days > 270) return "9_12_months";
-  if (days > 180) return "6_9_months";
-  if (days > 90) return "3_6_months";
-  if (days > 30) return "1_3_months";
-  if (days > 7) return "final_weeks";
-  return "day_of";
+  return getCurrentPhase(weddingDate);
 }
 
 export function checklistPhaseSortIndex(phase: string | null): number {
