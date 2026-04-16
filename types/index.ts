@@ -73,12 +73,14 @@ export interface BudgetItem {
   id: string;
   couple_id: string;
   category: string;
+  category_label: string;
   estimated_cost: number | null;
   quoted_cost: number | null;
   deposit_paid: number | null;
   balance_due: number | null;
   balance_due_date: string | null;
   notes: string | null;
+  sort_order: number;
   created_at: string;
   updated_at: string;
 }

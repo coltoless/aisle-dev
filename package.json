@@ -5,6 +5,8 @@
   "packageManager": "pnpm@9.15.4",
   "scripts": {
     "dev": "next dev",
+    "dev:clean": "rm -rf .next && next dev",
+    "dev:nocache": "rm -rf .next && DISABLE_WEBPACK_CACHE=1 next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

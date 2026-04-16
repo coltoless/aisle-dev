@@ -4,7 +4,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CHECKLIST_CATEGORIES } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/types/supabase";
@@ -43,7 +43,8 @@ type RowProps = {
   onToggle: (id: string, next: boolean) => void;
 };
 
-function TaskRow({ item, today, onToggle }: RowProps) {
+/** `forwardRef` required: AnimatePresence `popLayout` passes a ref for size measurement. */
+const TaskRow = forwardRef<HTMLLIElement, RowProps>(function TaskRow({ item, today, onToggle }, ref) {
   const due = item.due_date;
   const overdue = due ? due < today : false;
   const delta = due ? daysFromToday(due, today) : null;
@@ -68,6 +69,7 @@ function TaskRow({ item, today, onToggle }: RowProps) {
 
   return (
     <motion.li
+      ref={ref}
       layout
       initial={false}
       exit={{ opacity: 0, y: -8 }}
@@ -105,7 +107,7 @@ function TaskRow({ item, today, onToggle }: RowProps) {
       <div className="shrink-0 pt-0.5">{dateNode}</div>
     </motion.li>
   );
-}
+});
 
 export type UpcomingTasksProps = {
   items: ChecklistItem[];

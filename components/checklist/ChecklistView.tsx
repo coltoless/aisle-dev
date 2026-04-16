@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Loader2, PlusCircle } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { CHECKLIST_PHASE_CONFIG, type ChecklistPhase } from "@/lib/constants";
 import { applyChecklistFilter, type ChecklistFilter } from "@/lib/checklist/filters";
@@ -223,15 +223,6 @@ export function ChecklistView({ items: initialItems, currentPhase, weddingDate }
     void handleSnooze(id, until);
   }, [customSnoozeDate, customSnoozeId, handleSnooze]);
 
-  if (items.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center gap-3 py-24 text-center">
-        <Loader2 className="size-10 animate-spin text-[var(--color-accent)]" aria-hidden />
-        <p className="text-sm text-[var(--color-text-muted)]">Your checklist is loading...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-8">
       <header className="space-y-4">
@@ -288,7 +279,20 @@ export function ChecklistView({ items: initialItems, currentPhase, weddingDate }
         </div>
       ) : null}
 
-      {filterEmpty ? (
+      {total === 0 ? (
+        <div className="rounded-[12px] border border-dashed border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-6 py-14 text-center shadow-[var(--shadow-sm)]">
+          <p className="font-display text-lg font-semibold text-[var(--color-text-primary)]">No tasks yet</p>
+          <p className="mt-2 text-sm text-[var(--color-text-muted)]">Add a task to start planning, or use onboarding to seed your list.</p>
+          <Button
+            type="button"
+            className="mt-6 gap-2 bg-[var(--color-accent)] text-[var(--color-accent-foreground)]"
+            onClick={() => setAddOpen(true)}
+          >
+            <PlusCircle className="size-4" aria-hidden />
+            Add your first task
+          </Button>
+        </div>
+      ) : filterEmpty ? (
         <div className="rounded-[12px] border border-dashed border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-6 py-12 text-center">
           <p className="text-sm text-[var(--color-text-secondary)]">No tasks match this filter.</p>
           <button type="button" className="mt-3 text-sm font-medium text-[var(--color-accent)] hover:underline" onClick={() => setFilter("all")}>

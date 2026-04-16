@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Cell, Pie, PieChart, Tooltip } from "recharts";
 import { formatUsdAbbreviated, formatUsdFromCents } from "@/lib/dashboard/format-money";
 import type { BudgetItemRow } from "@/lib/dashboard/dashboard-data";
@@ -37,6 +38,12 @@ type BudgetSnapshotProps = {
 };
 
 export function BudgetSnapshot({ items }: BudgetSnapshotProps) {
+  /** Recharts generates clipPath ids from a module counter; SSR vs client counts differ → hydration warning. */
+  const [chartReady, setChartReady] = useState(false);
+  useEffect(() => {
+    setChartReady(true);
+  }, []);
+
   const slices = buildSlices(items);
   const hasData = slices.length > 0;
 
@@ -72,34 +79,41 @@ export function BudgetSnapshot({ items }: BudgetSnapshotProps) {
       <h2 className="font-display text-xl font-semibold text-[var(--color-text-primary)]">Budget snapshot</h2>
 
       <div className="mt-6 grid gap-8 lg:grid-cols-2 lg:items-center">
-        <div className="mx-auto flex w-full max-w-[280px] justify-center">
-          <PieChart width={280} height={220}>
-            <Pie
-              data={slices as { name: string; value: number; color: string }[]}
-              dataKey="value"
-              nameKey="name"
-              cx={140}
-              cy={110}
-              innerRadius={60}
-              outerRadius={90}
-              paddingAngle={2}
-              stroke="none"
-              isAnimationActive={false}
-            >
-              {slices.map((entry) => (
-                <Cell key={entry.name} fill={entry.color} />
-              ))}
-            </Pie>
-            <Tooltip
-              formatter={(value: number) => formatUsdFromCents(value)}
-              labelFormatter={(name) => name}
-              contentStyle={{
-                borderRadius: 8,
-                border: "1px solid var(--color-border)",
-                fontSize: 13,
-              }}
+        <div className="mx-auto flex h-[220px] w-full max-w-[280px] items-center justify-center">
+          {chartReady ? (
+            <PieChart width={280} height={220}>
+              <Pie
+                data={slices as { name: string; value: number; color: string }[]}
+                dataKey="value"
+                nameKey="name"
+                cx={140}
+                cy={110}
+                innerRadius={60}
+                outerRadius={90}
+                paddingAngle={2}
+                stroke="none"
+                isAnimationActive={false}
+              >
+                {slices.map((entry) => (
+                  <Cell key={entry.name} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip
+                formatter={(value: number) => formatUsdFromCents(value)}
+                labelFormatter={(name) => name}
+                contentStyle={{
+                  borderRadius: 8,
+                  border: "1px solid var(--color-border)",
+                  fontSize: 13,
+                }}
+              />
+            </PieChart>
+          ) : (
+            <div
+              className="h-[220px] w-[280px] max-w-full shrink-0 animate-pulse rounded-[999px] bg-[var(--color-bg-subtle)]"
+              aria-hidden
             />
-          </PieChart>
+          )}
         </div>
 
         <div>

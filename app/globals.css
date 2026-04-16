@@ -33,6 +33,7 @@
 
     --color-warning: var(--color-status-warning);
     --color-danger: var(--color-status-error);
+    --color-success: var(--color-status-success);
     --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.05);
 
     --shadow-card: 0 1px 3px rgba(28, 25, 23, 0.06), 0 1px 2px rgba(28, 25, 23, 0.04);
@@ -65,6 +66,16 @@
     --chart-3: 40 30% 55%;
     --chart-4: 152 20% 45%;
     --chart-5: 24 50% 45%;
+
+    /* Budget chart semantic tokens */
+    --color-chart-venue: hsl(var(--chart-1));
+    --color-chart-food: hsl(var(--chart-2));
+    --color-chart-photo: hsl(var(--chart-3));
+    --color-chart-music: hsl(var(--chart-4));
+    --color-chart-florals: hsl(var(--chart-5));
+    --color-chart-attire: hsl(var(--chart-2) / 0.85);
+    --color-chart-misc: hsl(var(--chart-3) / 0.85);
+    --color-chart-unallocated: hsl(var(--muted));
   }
 
   .dark {
@@ -94,6 +105,7 @@
 
     --color-warning: var(--color-status-warning);
     --color-danger: var(--color-status-error);
+    --color-success: var(--color-status-success);
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
 
     --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.2);
@@ -124,6 +136,16 @@
     --chart-3: 24 30% 55%;
     --chart-4: 152 30% 45%;
     --chart-5: 24 40% 55%;
+
+    /* Budget chart semantic tokens */
+    --color-chart-venue: hsl(var(--chart-1));
+    --color-chart-food: hsl(var(--chart-2));
+    --color-chart-photo: hsl(var(--chart-3));
+    --color-chart-music: hsl(var(--chart-4));
+    --color-chart-florals: hsl(var(--chart-5));
+    --color-chart-attire: hsl(var(--chart-2) / 0.85);
+    --color-chart-misc: hsl(var(--chart-3) / 0.85);
+    --color-chart-unallocated: hsl(var(--muted));
   }
 }
 
