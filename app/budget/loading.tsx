@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "@/lib/utils";
 
 function SkeletonBlock({ className }: { className?: string }) {
@@ -76,4 +74,3 @@ export default function Loading() {
     </div>
   );
 }
-

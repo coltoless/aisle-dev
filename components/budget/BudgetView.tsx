@@ -1,15 +1,16 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useRef, useState, useTransition, type ChangeEvent } from "react";
 import { motion } from "framer-motion";
-import { Download } from "lucide-react";
+import { Download, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BudgetDonutChart } from "@/components/budget/BudgetDonutChart";
 import { BudgetTable } from "@/components/budget/BudgetTable";
 import { PaymentSchedule } from "@/components/budget/PaymentSchedule";
 import { AddBudgetItemModal } from "@/components/budget/AddBudgetItemModal";
 import { formatUsdFromCents } from "@/lib/dashboard/format-money";
-import { updateBudgetItem } from "@/lib/actions/budget";
+import { parseBudgetImportCsv, parseBudgetImportXlsx } from "@/lib/budget/import-budget-file";
+import { importBudgetItems, updateBudgetItem } from "@/lib/actions/budget";
 import { useToast } from "@/hooks/use-toast";
 import type { BudgetItem } from "@/types/index";
 
@@ -47,6 +48,7 @@ function escapeCsvCell(value: string): string {
 export function BudgetView({ coupleId, items: initialItems, totalBudget, weddingDate }: BudgetViewProps) {
   const { toast } = useToast();
   const [, startTransition] = useTransition();
+  const importInputRef = useRef<HTMLInputElement>(null);
   const [items, setItems] = useState<BudgetItem[]>(initialItems);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -99,6 +101,63 @@ export function BudgetView({ coupleId, items: initialItems, totalBudget, wedding
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
+  };
+
+  const openImportPicker = () => importInputRef.current?.click();
+
+  const onImportFile = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    try {
+      const buf = await file.arrayBuffer();
+      const lower = file.name.toLowerCase();
+      const rows =
+        lower.endsWith(".csv") || file.type === "text/csv"
+          ? parseBudgetImportCsv(new TextDecoder("utf-8").decode(buf))
+          : await parseBudgetImportXlsx(buf);
+
+      if (rows.length === 0) {
+        toast({
+          variant: "destructive",
+          title: "No rows to import",
+          description: "Use a header row with a Category column (CSV or XLSX).",
+        });
+        return;
+      }
+
+      startTransition(async () => {
+        try {
+          const { added, skipped } = await importBudgetItems(coupleId, rows);
+          if (added.length) {
+            setItems((prev) => [...prev, ...added].sort((a, b) => a.sort_order - b.sort_order));
+          }
+          toast({
+            title:
+              added.length > 0
+                ? `Imported ${added.length} new categor${added.length === 1 ? "y" : "ies"}`
+                : "No new categories to add",
+            description:
+              skipped > 0
+                ? `${skipped} row${skipped === 1 ? "" : "s"} skipped (empty or already on your budget).`
+                : undefined,
+          });
+        } catch (err) {
+          toast({
+            variant: "destructive",
+            title: "Import failed",
+            description: err instanceof Error ? err.message : "Try again.",
+          });
+        }
+      });
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "Could not read file",
+        description: err instanceof Error ? err.message : "Try a .csv or .xlsx file.",
+      });
+    }
   };
 
   const openAdd = () => {
@@ -169,10 +228,24 @@ export function BudgetView({ coupleId, items: initialItems, totalBudget, wedding
             Budget Tracker
           </h1>
         </div>
-        <Button type="button" variant="ghost" onClick={exportCsv} className="gap-2">
-          <Download className="size-4" aria-hidden />
-          Export CSV
-        </Button>
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <input
+            ref={importInputRef}
+            type="file"
+            accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+            className="sr-only"
+            onChange={onImportFile}
+            aria-label="Import budget CSV or Excel file"
+          />
+          <Button type="button" variant="ghost" onClick={openImportPicker} className="gap-2">
+            <Upload className="size-4" aria-hidden />
+            Import
+          </Button>
+          <Button type="button" variant="ghost" onClick={exportCsv} className="gap-2">
+            <Download className="size-4" aria-hidden />
+            Export CSV
+          </Button>
+        </div>
       </div>
 
       <motion.div {...motionUp} transition={{ ...motionUp.transition, delay: 0 }}>

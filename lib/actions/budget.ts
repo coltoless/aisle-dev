@@ -2,6 +2,7 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import type { BudgetImportRow } from "@/lib/budget/import-budget-file";
 import type { BudgetItem } from "@/types/index";
 import type { Database } from "@/types/supabase";
 
@@ -44,6 +45,10 @@ function slugifyCategoryId(label: string): string {
     .replaceAll(/[^a-z0-9]+/g, "_")
     .replaceAll(/^_+|_+$/g, "")
     .slice(0, 60);
+}
+
+function normLabel(s: string): string {
+  return s.trim().toLowerCase().replace(/\s+/g, " ");
 }
 
 export type AddBudgetItemData = {
@@ -141,5 +146,95 @@ export async function deleteBudgetItem(id: string): Promise<void> {
   const supabase = await serverDb();
   const { error } = await supabase.from("budget_items").delete().eq("id", id);
   if (error) throw new Error(error.message);
+}
+
+/**
+ * Inserts rows from CSV/XLSX import. Skips categories that already exist
+ * (same normalized label or same slug as an existing `category`).
+ */
+export async function importBudgetItems(
+  coupleId: string,
+  rows: BudgetImportRow[],
+): Promise<{ added: BudgetItem[]; skipped: number }> {
+  const supabase = await serverDb();
+
+  const { data: existingRows, error: existingErr } = await supabase
+    .from("budget_items")
+    .select("category, category_label")
+    .eq("couple_id", coupleId);
+  if (existingErr) throw new Error(existingErr.message);
+
+  const existingList = (existingRows ?? []).map((e) => ({
+    category: e.category,
+    category_label: e.category_label,
+  }));
+
+  const isDuplicate = (label: string) => {
+    const slug = slugifyCategoryId(label);
+    const norm = normLabel(label);
+    return existingList.some(
+      (e) => normLabel(e.category_label) === norm || e.category === slug,
+    );
+  };
+
+  const toInsert: BudgetImportRow[] = [];
+  let skipped = 0;
+
+  for (const r of rows) {
+    const label = r.category_label?.trim() ?? "";
+    if (!label) {
+      skipped++;
+      continue;
+    }
+    if (isDuplicate(label)) {
+      skipped++;
+      continue;
+    }
+    toInsert.push(r);
+    existingList.push({
+      category: slugifyCategoryId(label) || "custom",
+      category_label: label,
+    });
+  }
+
+  if (toInsert.length === 0) {
+    return { added: [], skipped };
+  }
+
+  const { data: maxRow } = await supabase
+    .from("budget_items")
+    .select("sort_order")
+    .eq("couple_id", coupleId)
+    .order("sort_order", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  let nextSort = (maxRow?.sort_order ?? 0) + 1;
+
+  const payload = toInsert.map((r) => {
+    const estimated = dollarsToCentsOrNull(r.estimated_cost);
+    const quoted = dollarsToCentsOrNull(r.quoted_cost);
+    const deposit = dollarsToCentsOrNull(r.deposit_paid);
+    const balanceDue = Math.max(0, (quoted ?? 0) - (deposit ?? 0));
+    const row = {
+      couple_id: coupleId,
+      category: slugifyCategoryId(r.category_label) || "custom",
+      category_label: r.category_label.trim(),
+      estimated_cost: estimated,
+      quoted_cost: quoted,
+      deposit_paid: deposit,
+      balance_due: balanceDue,
+      balance_due_date: r.balance_due_date?.trim() || null,
+      notes: r.notes?.trim() || null,
+      sort_order: nextSort,
+    };
+    nextSort++;
+    return row;
+  });
+
+  const { data: inserted, error } = await supabase.from("budget_items").insert(payload).select();
+  if (error || !inserted) throw new Error(error?.message ?? "Import insert failed");
+
+  return { added: inserted.map(mapRow), skipped };
 }
 

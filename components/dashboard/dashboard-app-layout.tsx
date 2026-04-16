@@ -9,7 +9,7 @@ type CoupleSidebar = Pick<
   "id" | "partner1_name" | "partner2_name"
 >;
 
-export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function DashboardAppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
   const {
     data: { user },
