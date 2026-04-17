@@ -315,7 +315,8 @@ export async function POST(req: NextRequest) {
           { couple_id: coupleId, role: "user", content: userContent, mode: modeStr },
           { couple_id: coupleId, role: "assistant", content: assistantText.trim(), mode: modeStr },
         ];
-        await supabase.from("ai_conversations").insert(rows);
+        const { error: convErr } = await supabase.from("ai_conversations").insert(rows);
+        void convErr; /* schema may be behind migration; stream already delivered */
       }
 
       controller.close();
