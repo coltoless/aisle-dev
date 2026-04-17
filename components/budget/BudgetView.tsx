@@ -129,19 +129,32 @@ export function BudgetView({ coupleId, items: initialItems, totalBudget, wedding
 
       startTransition(async () => {
         try {
-          const { added, skipped } = await importBudgetItems(coupleId, rows);
-          if (added.length) {
-            setItems((prev) => [...prev, ...added].sort((a, b) => a.sort_order - b.sort_order));
+          const { added, updated, skipped } = await importBudgetItems(coupleId, rows);
+          if (added.length || updated.length) {
+            setItems((prev) => {
+              const byId = new Map(prev.map((i) => [i.id, i]));
+              for (const u of updated) byId.set(u.id, u);
+              for (const a of added) byId.set(a.id, a);
+              return Array.from(byId.values()).sort((a, b) => a.sort_order - b.sort_order);
+            });
           }
+          const parts: string[] = [];
+          if (added.length)
+            parts.push(`${added.length} new categor${added.length === 1 ? "y" : "ies"}`);
+          if (updated.length)
+            parts.push(`${updated.length} updated`);
+          if (skipped > 0) parts.push(`${skipped} skipped`);
           toast({
             title:
-              added.length > 0
-                ? `Imported ${added.length} new categor${added.length === 1 ? "y" : "ies"}`
-                : "No new categories to add",
+              added.length || updated.length
+                ? `Import complete${parts.length ? `: ${parts.join(" · ")}` : ""}`
+                : "No changes from import",
             description:
-              skipped > 0
-                ? `${skipped} row${skipped === 1 ? "" : "s"} skipped (empty or already on your budget).`
-                : undefined,
+              skipped > 0 && !added.length && !updated.length
+                ? `${skipped} row${skipped === 1 ? "" : "s"} skipped (empty category, duplicate in file, or no matching columns).`
+                : skipped > 0
+                  ? `${skipped} row${skipped === 1 ? "" : "s"} skipped (empty category or duplicate in file).`
+                  : undefined,
           });
         } catch (err) {
           toast({

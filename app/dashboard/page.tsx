@@ -95,6 +95,7 @@ export default async function DashboardPage() {
     budget_exact: profileRow.budget_exact,
     style_tags: profileRow.style_tags as WeddingProfile["style_tags"],
     priorities: profileRow.priorities as WeddingProfile["priorities"],
+    style_notes: profileRow.style_notes ?? null,
     onboarding_complete: profileRow.onboarding_complete,
     created_at: profileRow.created_at,
     updated_at: profileRow.updated_at,

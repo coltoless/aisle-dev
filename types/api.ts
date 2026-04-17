@@ -14,15 +14,34 @@ export function isApiError(res: unknown): res is ApiError {
 
 // ─── AI BUDDY — POST /api/ai/buddy ───
 
+export type BuddyChatMode = "planning" | "vendor_email" | "vision_board" | "timeline";
+
 export interface BuddyMessage {
+  id: string;
   role: "user" | "assistant";
   content: string;
+  createdAt: string;
+  mode: BuddyChatMode;
+  /** Persisted row id when loaded from ai_conversations */
+  sourceId?: string;
+  /** Tool confirmations tied to this assistant turn */
+  toolActions?: BuddyToolAction[];
+  /** Local-only: proactive / intro bubbles are not saved the same way */
+  ephemeral?: boolean;
 }
 
 export interface BuddyRequest {
-  messages: BuddyMessage[];
+  messages: Array<Pick<BuddyMessage, "role" | "content">>;
   coupleId: string;
+  mode: BuddyChatMode;
 }
+
+/** NDJSON stream chunks from POST /api/ai/buddy */
+export type BuddyStreamChunk =
+  | { type: "text"; text: string }
+  | { type: "tool_action"; action: BuddyToolAction }
+  | BuddyStreamDoneEvent
+  | { type: "error"; message: string };
 
 export interface BuddyStreamDoneEvent {
   type: "done";
@@ -34,6 +53,11 @@ export interface BuddyToolAction {
   success: boolean;
   confirmationMessage: string;
   input: Record<string, unknown>;
+  /** For undo */
+  checklistItemId?: string;
+  budgetFlagId?: string;
+  /** Client navigation after tool */
+  navigateTo?: string;
 }
 
 // ─── VENUES — POST /api/ai/venues ───

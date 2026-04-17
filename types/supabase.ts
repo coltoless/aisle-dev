@@ -20,6 +20,7 @@ export type Database = {
           couple_id: string
           created_at: string
           id: string
+          mode: string
           role: string
         }
         Insert: {
@@ -27,6 +28,7 @@ export type Database = {
           couple_id: string
           created_at?: string
           id?: string
+          mode?: string
           role: string
         }
         Update: {
@@ -34,6 +36,7 @@ export type Database = {
           couple_id?: string
           created_at?: string
           id?: string
+          mode?: string
           role?: string
         }
         Relationships: [
@@ -414,6 +417,7 @@ export type Database = {
           location_state: string | null
           onboarding_complete: boolean
           priorities: string[]
+          style_notes: string | null
           style_tags: string[]
           updated_at: string
           wedding_date: string | null
@@ -430,6 +434,7 @@ export type Database = {
           location_state?: string | null
           onboarding_complete?: boolean
           priorities?: string[]
+          style_notes?: string | null
           style_tags?: string[]
           updated_at?: string
           wedding_date?: string | null
@@ -446,6 +451,7 @@ export type Database = {
           location_state?: string | null
           onboarding_complete?: boolean
           priorities?: string[]
+          style_notes?: string | null
           style_tags?: string[]
           updated_at?: string
           wedding_date?: string | null

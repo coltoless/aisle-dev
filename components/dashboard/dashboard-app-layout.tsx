@@ -45,6 +45,7 @@ export default async function DashboardAppLayout({ children }: { children: React
 
   return (
     <DashboardShell
+      coupleId={couple.id}
       partner1={couple.partner1_name}
       partner2={couple.partner2_name}
       countdownLabel={countdownLabel}

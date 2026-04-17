@@ -1,46 +1,48 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { AnimatePresence, motion } from "framer-motion";
+import { BuddyChatPanel } from "@/components/buddy/BuddyChatPanel";
+import { useBuddyStore } from "@/store/buddyStore";
 
 type BuddyDrawerProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  coupleId: string;
 };
 
-export function BuddyDrawer({ open, onOpenChange }: BuddyDrawerProps) {
+export function BuddyDrawer({ coupleId }: BuddyDrawerProps) {
+  const isOpen = useBuddyStore((s) => s.isOpen);
+  const isStreaming = useBuddyStore((s) => s.isStreaming);
+  const setBuddyOpen = useBuddyStore((s) => s.setBuddyOpen);
+
   return (
-    <>
-      {open ? (
-        <button
-          type="button"
-          aria-label="Close AI Buddy"
-          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[1px]"
-          onClick={() => onOpenChange(false)}
-        />
+    <AnimatePresence>
+      {isOpen ? (
+        <>
+          <motion.button
+            type="button"
+            aria-label="Close buddy overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-40 bg-black/40 md:hidden"
+            onClick={() => {
+              if (!isStreaming) setBuddyOpen(false);
+            }}
+          />
+          <motion.aside
+            role="dialog"
+            aria-modal="true"
+            aria-label="AI Planning Buddy"
+            initial={{ x: 420 }}
+            animate={{ x: 0 }}
+            exit={{ x: 420 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="fixed bottom-0 right-0 top-0 z-50 flex w-[420px] max-w-full flex-col border-l border-[var(--color-border)] bg-[var(--color-bg-secondary)] shadow-[var(--shadow-elevated)]"
+          >
+            <BuddyChatPanel coupleId={coupleId} enableProactiveNudge className="bg-[var(--color-bg-card)]" />
+          </motion.aside>
+        </>
       ) : null}
-      <aside
-        className={cn(
-          "fixed bottom-0 right-0 top-0 z-50 w-full max-w-md border-l border-[var(--color-border)] bg-[var(--color-bg-card)] shadow-[var(--shadow-elevated)] transition-transform duration-200 ease-out",
-          open ? "translate-x-0" : "translate-x-full",
-        )}
-        aria-hidden={!open}
-      >
-        <div className="flex h-full flex-col p-6">
-          <div className="flex items-center justify-between border-b border-[var(--color-border)] pb-4">
-            <h2 className="font-display text-xl font-semibold text-[var(--color-text-primary)]">AI Buddy</h2>
-            <button
-              type="button"
-              className="rounded-md px-2 py-1 text-sm text-[var(--color-text-muted)] hover:bg-[var(--color-bg-subtle)]"
-              onClick={() => onOpenChange(false)}
-            >
-              Close
-            </button>
-          </div>
-          <div className="flex flex-1 items-center justify-center text-sm text-[var(--color-text-muted)]">
-            Coming soon
-          </div>
-        </div>
-      </aside>
-    </>
+    </AnimatePresence>
   );
 }

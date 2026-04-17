@@ -105,15 +105,15 @@ test("dashboard shows real stats, donut, tasks, nudge, and BuddyDrawer opens", a
   await expect(page.getByText(/Photography books up fast/i)).toBeVisible();
 
   // "Chat with Aisle →" opens BuddyDrawer.
-  const drawerHeading = page.getByRole("heading", { name: "AI Buddy" });
-  await expect(drawerHeading).toBeHidden();
+  const buddyDialog = page.getByRole("dialog", { name: "AI Planning Buddy" });
+  await expect(buddyDialog).toBeHidden();
   await page.getByRole("button", { name: "Chat with Aisle →" }).click();
-  await expect(drawerHeading).toBeVisible();
+  await expect(buddyDialog).toBeVisible();
   await page.getByRole("button", { name: "Close", exact: true }).click();
-  await expect(drawerHeading).toBeHidden();
+  await expect(buddyDialog).toBeHidden();
 
   // FAB opens BuddyDrawer too.
   await page.getByRole("button", { name: "Open AI Buddy" }).click();
-  await expect(drawerHeading).toBeVisible();
+  await expect(buddyDialog).toBeVisible();
 });
 

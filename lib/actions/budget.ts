@@ -3,6 +3,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import type { BudgetImportRow } from "@/lib/budget/import-budget-file";
+import { normalizeBudgetDueDateStored } from "@/lib/budget/due-date";
 import type { BudgetItem } from "@/types/index";
 import type { Database } from "@/types/supabase";
 
@@ -23,7 +24,7 @@ function mapRow(row: BudgetRow): BudgetItem {
     quoted_cost: row.quoted_cost,
     deposit_paid: row.deposit_paid,
     balance_due: row.balance_due,
-    balance_due_date: row.balance_due_date,
+    balance_due_date: normalizeBudgetDueDateStored(row.balance_due_date),
     notes: row.notes,
     sort_order: row.sort_order,
     created_at: row.created_at,
@@ -74,11 +75,23 @@ export type UpdateBudgetItemData = {
 export async function updateBudgetItem(id: string, data: UpdateBudgetItemData): Promise<BudgetItem> {
   const supabase = await serverDb();
 
+  const { data: current, error: curErr } = await supabase
+    .from("budget_items")
+    .select("quoted_cost, deposit_paid")
+    .eq("id", id)
+    .single();
+  if (curErr || !current) throw new Error(curErr?.message ?? "Not found");
+
   const patch: Database["public"]["Tables"]["budget_items"]["Update"] = {};
 
   if (data.category !== undefined) patch.category = data.category;
-  if (data.category_label !== undefined) patch.category_label = data.category_label;
-  if (data.balance_due_date !== undefined) patch.balance_due_date = data.balance_due_date;
+  if (data.category_label !== undefined) {
+    patch.category_label = data.category_label;
+    patch.category = data.category ?? (slugifyCategoryId(data.category_label) || "custom");
+  }
+  if (data.balance_due_date !== undefined) {
+    patch.balance_due_date = normalizeBudgetDueDateStored(data.balance_due_date);
+  }
   if (data.notes !== undefined) patch.notes = data.notes;
   if (data.sort_order !== undefined) patch.sort_order = data.sort_order;
 
@@ -87,13 +100,12 @@ export async function updateBudgetItem(id: string, data: UpdateBudgetItemData): 
   if (data.quoted_cost !== undefined) patch.quoted_cost = dollarsToCentsOrNull(data.quoted_cost);
   if (data.deposit_paid !== undefined) patch.deposit_paid = dollarsToCentsOrNull(data.deposit_paid);
 
-  // Keep stored balance_due non-negative for schedule queries.
-  const q = patch.quoted_cost ?? undefined;
-  const d = patch.deposit_paid ?? undefined;
-  if (q !== undefined || d !== undefined) {
-    const qNext = q ?? 0;
-    const dNext = d ?? 0;
-    patch.balance_due = Math.max(0, qNext - dNext);
+  if (data.quoted_cost !== undefined || data.deposit_paid !== undefined) {
+    const qEff =
+      patch.quoted_cost !== undefined ? patch.quoted_cost : current.quoted_cost;
+    const dEff =
+      patch.deposit_paid !== undefined ? patch.deposit_paid : current.deposit_paid;
+    patch.balance_due = Math.max(0, (qEff ?? 0) - (dEff ?? 0));
   }
 
   const { data: row, error } = await supabase.from("budget_items").update(patch).eq("id", id).select().single();
@@ -131,7 +143,7 @@ export async function addBudgetItem(coupleId: string, data: AddBudgetItemData): 
       quoted_cost: quoted,
       deposit_paid: deposit,
       balance_due: balanceDue,
-      balance_due_date: data.balance_due_date?.trim() || null,
+      balance_due_date: normalizeBudgetDueDateStored(data.balance_due_date),
       notes: data.notes?.trim() || null,
       sort_order: nextSort,
     })
@@ -148,37 +160,54 @@ export async function deleteBudgetItem(id: string): Promise<void> {
   if (error) throw new Error(error.message);
 }
 
+function findMatchingBudgetItemId(label: string, items: BudgetItem[]): string | null {
+  const slug = slugifyCategoryId(label);
+  const norm = normLabel(label);
+  const hit = items.find(
+    (e) => normLabel(e.category_label) === norm || e.category === slug,
+  );
+  return hit?.id ?? null;
+}
+
+function importRowToUpdatePayload(row: BudgetImportRow): UpdateBudgetItemData {
+  const data: UpdateBudgetItemData = {
+    category_label: row.category_label.trim(),
+  };
+  const pf = row.valueFieldsFromFile;
+  if (pf.has("estimated_cost")) data.estimated_cost = row.estimated_cost ?? null;
+  if (pf.has("quoted_cost")) data.quoted_cost = row.quoted_cost ?? null;
+  if (pf.has("deposit_paid")) data.deposit_paid = row.deposit_paid ?? null;
+  if (pf.has("balance_due_date")) {
+    data.balance_due_date = normalizeBudgetDueDateStored(row.balance_due_date);
+  }
+  if (pf.has("notes")) data.notes = row.notes?.trim() || null;
+  return data;
+}
+
 /**
- * Inserts rows from CSV/XLSX import. Skips categories that already exist
- * (same normalized label or same slug as an existing `category`).
+ * Merges CSV/XLSX rows into budget_items: updates matching categories, inserts new ones.
+ * Matching: same normalized label or same slug as `category`. Only columns present in the
+ * file are updated (see `valueFieldsFromFile` on each row).
  */
 export async function importBudgetItems(
   coupleId: string,
   rows: BudgetImportRow[],
-): Promise<{ added: BudgetItem[]; skipped: number }> {
+): Promise<{ added: BudgetItem[]; updated: BudgetItem[]; skipped: number }> {
   const supabase = await serverDb();
 
-  const { data: existingRows, error: existingErr } = await supabase
+  const { data: existingData, error: existingErr } = await supabase
     .from("budget_items")
-    .select("category, category_label")
+    .select("*")
     .eq("couple_id", coupleId);
   if (existingErr) throw new Error(existingErr.message);
 
-  const existingList = (existingRows ?? []).map((e) => ({
-    category: e.category,
-    category_label: e.category_label,
-  }));
-
-  const isDuplicate = (label: string) => {
-    const slug = slugifyCategoryId(label);
-    const norm = normLabel(label);
-    return existingList.some(
-      (e) => normLabel(e.category_label) === norm || e.category === slug,
-    );
-  };
+  let workingItems = (existingData ?? []).map(mapRow);
+  const added: BudgetItem[] = [];
+  const updated: BudgetItem[] = [];
+  let skipped = 0;
 
   const toInsert: BudgetImportRow[] = [];
-  let skipped = 0;
+  const queuedNewNorms = new Set<string>();
 
   for (const r of rows) {
     const label = r.category_label?.trim() ?? "";
@@ -186,19 +215,26 @@ export async function importBudgetItems(
       skipped++;
       continue;
     }
-    if (isDuplicate(label)) {
+
+    const id = findMatchingBudgetItemId(label, workingItems);
+    if (id) {
+      const updatedRow = await updateBudgetItem(id, importRowToUpdatePayload(r));
+      updated.push(updatedRow);
+      workingItems = workingItems.map((it) => (it.id === id ? updatedRow : it));
+      continue;
+    }
+
+    const nk = normLabel(label);
+    if (queuedNewNorms.has(nk)) {
       skipped++;
       continue;
     }
+    queuedNewNorms.add(nk);
     toInsert.push(r);
-    existingList.push({
-      category: slugifyCategoryId(label) || "custom",
-      category_label: label,
-    });
   }
 
   if (toInsert.length === 0) {
-    return { added: [], skipped };
+    return { added, updated, skipped };
   }
 
   const { data: maxRow } = await supabase
@@ -224,7 +260,7 @@ export async function importBudgetItems(
       quoted_cost: quoted,
       deposit_paid: deposit,
       balance_due: balanceDue,
-      balance_due_date: r.balance_due_date?.trim() || null,
+      balance_due_date: normalizeBudgetDueDateStored(r.balance_due_date),
       notes: r.notes?.trim() || null,
       sort_order: nextSort,
     };
@@ -235,6 +271,14 @@ export async function importBudgetItems(
   const { data: inserted, error } = await supabase.from("budget_items").insert(payload).select();
   if (error || !inserted) throw new Error(error?.message ?? "Import insert failed");
 
-  return { added: inserted.map(mapRow), skipped };
+  added.push(...inserted.map(mapRow));
+
+  return { added, updated, skipped };
+}
+
+export async function deleteBudgetFlag(id: string): Promise<void> {
+  const supabase = await serverDb();
+  const { error } = await supabase.from("budget_flags").delete().eq("id", id);
+  if (error) throw new Error(error.message);
 }
 

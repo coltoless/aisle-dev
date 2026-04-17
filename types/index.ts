@@ -47,6 +47,8 @@ export interface WeddingProfile {
   budget_exact: number | null;
   style_tags: StyleTag[] | null;
   priorities: PriorityCategory[] | null;
+  /** Free-form vision / mood notes from AI Buddy vision board */
+  style_notes: string | null;
   onboarding_complete: boolean;
   created_at: string;
   updated_at: string;
@@ -139,4 +141,5 @@ export interface AIConversationMessage {
   role: "user" | "assistant";
   content: string;
   created_at: string;
+  mode?: "planning" | "vendor_email" | "vision_board" | "timeline";
 }

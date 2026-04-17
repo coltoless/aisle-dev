@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   Send,
   Settings,
+  Sparkles,
   Users,
 } from "lucide-react";
 import { BuddyDrawer } from "@/components/buddy/BuddyDrawer";
@@ -23,9 +24,11 @@ const nav = [
   { href: "/budget", label: "Budget", icon: DollarSign },
   { href: "/vendors", label: "Vendors", icon: Users },
   { href: "/contracts", label: "Contracts", icon: FileText },
+  { href: "/buddy", label: "Buddy", icon: Sparkles },
 ] as const;
 
 type DashboardShellProps = {
+  coupleId: string;
   partner1: string;
   partner2: string;
   countdownLabel: string | null;
@@ -34,6 +37,7 @@ type DashboardShellProps = {
 };
 
 export function DashboardShell({
+  coupleId,
   partner1,
   partner2,
   countdownLabel,
@@ -41,7 +45,6 @@ export function DashboardShell({
   children,
 }: DashboardShellProps) {
   const pathname = usePathname();
-  const buddyOpen = useBuddyStore((s) => s.buddyOpen);
   const setBuddyOpen = useBuddyStore((s) => s.setBuddyOpen);
 
   return (
@@ -118,7 +121,7 @@ export function DashboardShell({
         <Send className="size-5" strokeWidth={2} aria-hidden />
       </button>
 
-      <BuddyDrawer open={buddyOpen} onOpenChange={setBuddyOpen} />
+      <BuddyDrawer coupleId={coupleId} />
     </div>
   );
 }
